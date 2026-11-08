@@ -481,6 +481,8 @@ public sealed class AppUpdateServiceTests : IDisposable
     }
 
     [Theory]
+    [InlineData("https://github.com/panda-island/DeskBox/releases/download/v1.5.10/DeskBox_Setup_1.5.10_x64.exe", true)]
+    [InlineData("https://github.com/panda-island/Other/releases/download/v1/Setup.exe", false)]
     [InlineData("https://deskbox.fun/update/DeskBox_Setup.exe", true)]
     [InlineData("https://cdn.deskbox.fun/DeskBox_Setup.exe", true)]
     [InlineData("https://github.com/Tianyu199509/DeskBox/releases/download/v1.5.2/DeskBox_Setup.exe", true)]

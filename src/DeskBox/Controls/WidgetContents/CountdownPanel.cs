@@ -30,6 +30,7 @@ public sealed class CountdownPanel : StackPanel
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(30) };
     private CountdownPreferences _data = new();
     private bool _busy;
+    private readonly SemaphoreSlim _saveGate = new(1, 1);
     public bool IsCountdownVisible => _data.Visible;
 
     public CountdownPanel(string widgetId)
@@ -65,6 +66,7 @@ public sealed class CountdownPanel : StackPanel
 
     private async Task SaveAsync()
     {
+        await _saveGate.WaitAsync();
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
@@ -74,6 +76,7 @@ public sealed class CountdownPanel : StackPanel
             _status.Text = "";
         }
         catch (Exception ex) { _status.Text = "儲存失敗，請重試：" + ex.Message; }
+        finally { _saveGate.Release(); }
     }
 
     private void Render()

@@ -785,9 +785,8 @@ public sealed partial class AppUpdateService : IAppUpdateService
         // objects.githubusercontent.com, which the HTTP client follows and
         // which therefore must never be trusted as a manifest origin itself.
         return string.Equals(uri.Host, "github.com", StringComparison.OrdinalIgnoreCase) &&
-            uri.AbsolutePath.StartsWith(
-                "/Tianyu199509/DeskBox/releases/download/",
-                StringComparison.OrdinalIgnoreCase);
+            (uri.AbsolutePath.StartsWith("/panda-island/DeskBox/releases/download/", StringComparison.OrdinalIgnoreCase) ||
+             uri.AbsolutePath.StartsWith("/Tianyu199509/DeskBox/releases/download/", StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool IsHostOrSubdomain(Uri uri, string domain)

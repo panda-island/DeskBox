@@ -11,7 +11,7 @@ permissions:
   contents: write
 concurrency:
   group: countdown-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   release:
     runs-on: windows-2025

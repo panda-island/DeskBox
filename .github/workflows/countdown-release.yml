@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'src/**'
+      - 'global.json'
       - 'tests/**'
       - 'installer/**'
       - '.github/workflows/countdown-release.yml'
@@ -27,6 +28,7 @@ jobs:
       - name: Restore and test x64
         shell: pwsh
         run: |
+          dotnet --version
           dotnet restore DeskBox.sln --locked-mode -p:Platform=x64 -p:RuntimeIdentifier=win-x64
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           dotnet test tests/DeskBox.Tests/DeskBox.Tests.csproj -c Release --no-restore -p:Platform=x64 -p:RuntimeIdentifier=win-x64 -p:WindowsAppSdkBootstrapInitialize=false --logger trx -v:minimal

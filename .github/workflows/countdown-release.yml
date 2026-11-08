@@ -53,7 +53,7 @@ jobs:
           $hash = (Get-FileHash $exe.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  $($exe.Name)" | Set-Content "$($exe.FullName).sha256"
           $url = "https://github.com/${{ github.repository }}/releases/download/v$version"
-          @{ schemaVersion=1; channel='stable'; version=$version; releaseDate=(Get-Date -Format yyyy-MM-dd); minimumSupportedVersion='1.0.0'; downloadUrl="$url/$($exe.Name)"; manualDownloadUrl="https://github.com/${{ github.repository }}/releases/latest"; sha256=$hash; size=$exe.Length; summary=@{ 'zh-TW'='新增成年、統測與自訂倒數；移除捐獻入口。'; 'en-US'='Desktop countdowns and fork update channel.' } } | ConvertTo-Json -Depth 6 | Set-Content "$out/stable.json" -Encoding utf8NoBOM
+          @{ schemaVersion=1; channel='stable'; version=$version; releaseDate=(Get-Date -Format yyyy-MM-dd); minimumSupportedVersion='1.0.0'; downloadUrl="$url/$($exe.Name)"; manualDownloadUrl="https://github.com/${{ github.repository }}/releases/latest"; sha256=$hash; size=$exe.Length; summary=@{ 'zh-TW'='倒數直接顯示於透明桌面格子；改用獨立編輯視窗，避免欄位被裁切。'; 'en-US'='Transparent desktop countdowns with a separate resizable editor.' } } | ConvertTo-Json -Depth 6 | Set-Content "$out/stable.json" -Encoding utf8NoBOM
           "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
       - name: Save build artifacts
         uses: actions/upload-artifact@v4
@@ -67,5 +67,5 @@ jobs:
         run: |
           gh release view "v$env:RELEASE_VERSION" --repo '${{ github.repository }}' 2>$null
           if ($LASTEXITCODE -eq 0) { throw 'Version already published; bump the version before releasing again.' }
-          gh release create "v$env:RELEASE_VERSION" .artifacts/release/* --repo '${{ github.repository }}' --target '${{ github.sha }}' --title "DeskBox $env:RELEASE_VERSION 倒數版" --notes '在時光格子右上角按「倒數」，新增成年、統測或自訂日期。此分支後續可由 App 內更新。官方版第一次切換需安裝此版本。'
+          gh release create "v$env:RELEASE_VERSION" .artifacts/release/* --repo '${{ github.repository }}' --target '${{ github.sha }}' --title "DeskBox $env:RELEASE_VERSION 倒數版" --notes '倒數直接顯示於透明桌面格子；編輯改用獨立可調整大小視窗。1.5.10 使用者可在 App 內更新。'
           if ($LASTEXITCODE) { exit $LASTEXITCODE }

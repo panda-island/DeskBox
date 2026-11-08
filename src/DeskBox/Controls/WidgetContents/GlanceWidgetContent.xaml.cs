@@ -66,13 +66,27 @@ public sealed partial class GlanceWidgetContent : UserControl
         _calendarImageGradientBrush.GradientStops.Add(_calendarImageGradientStart);
         _calendarImageGradientBrush.GradientStops.Add(_calendarImageGradientEnd);
         DataContext = viewModel;
+        var clockSurface = new Grid();
+        var originalLayers = RootGrid.Children.ToArray();
+        RootGrid.Children.Clear();
+        foreach (var layer in originalLayers) clockSurface.Children.Add(layer);
+        RootGrid.Children.Add(clockSurface);
         var countdown = new CountdownPanel(viewModel.Config.Id);
-        var scroller = new ScrollViewer { Content = countdown, Visibility = Visibility.Collapsed, Background = (Brush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"] };
+        var scroller = new ScrollViewer { Content = countdown, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
         RootGrid.Children.Add(scroller);
-        var toggle = new Microsoft.UI.Xaml.Controls.Primitives.ToggleButton { Content = "倒數", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(8), IsChecked = countdown.IsCountdownVisible };
-        scroller.Visibility = countdown.IsCountdownVisible ? Visibility.Visible : Visibility.Collapsed;
-        toggle.Click += async (_, _) => { scroller.Visibility = toggle.IsChecked == true ? Visibility.Visible : Visibility.Collapsed; await countdown.SetVisibleAsync(toggle.IsChecked == true); };
+        var toggle = new Microsoft.UI.Xaml.Controls.Primitives.ToggleButton { HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(8) };
+        void ApplyCountdownMode()
+        {
+            bool visible = countdown.IsCountdownVisible;
+            clockSurface.Visibility = visible ? Visibility.Collapsed : Visibility.Visible;
+            scroller.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            toggle.IsChecked = visible;
+            toggle.Content = visible ? "時鐘" : "倒數";
+        }
+        countdown.DisplayChanged += ApplyCountdownMode;
+        toggle.Click += async (_, _) => await countdown.SetVisibleAsync(!countdown.IsCountdownVisible);
         RootGrid.Children.Add(toggle);
+        ApplyCountdownMode();
         _loadingDelayTimer.Tick += LoadingDelayTimer_Tick;
         _imageResizeDelayTimer.Tick += ImageResizeDelayTimer_Tick;
         _layoutResizeTimer.Tick += LayoutResizeTimer_Tick;

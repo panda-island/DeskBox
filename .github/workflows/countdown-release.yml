@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'src/**'
+      - 'tests/**'
       - 'installer/**'
       - '.github/workflows/countdown-release.yml'
   workflow_dispatch:

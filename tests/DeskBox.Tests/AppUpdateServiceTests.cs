@@ -112,7 +112,7 @@ public sealed class AppUpdateServiceTests : IDisposable
         Assert.Equal(
             "https://deskbox.fun/download",
             SettingsViewModel.GetManualUpdateDownloadUrl(manifest));
-        Assert.Equal("https://deskbox.fun/download", SettingsViewModel.GetManualUpdateDownloadUrl(null));
+        Assert.Equal("https://github.com/panda-island/DeskBox/releases/latest", SettingsViewModel.GetManualUpdateDownloadUrl(null));
     }
 
     [Theory]

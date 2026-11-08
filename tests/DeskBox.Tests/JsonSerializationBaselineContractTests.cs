@@ -35,6 +35,7 @@ public sealed class JsonSerializationBaselineContractTests : IDisposable
             ["src/DeskBox/App.AotTodoNotificationForwardingSmoke.cs"] = 1,
             // 3: update-check manifest, GitHub release fallback, and the
             // display-only content-manifest fetch (release-notes window).
+            ["src/DeskBox/Controls/WidgetContents/CountdownPanel.cs"] = 2,
             ["src/DeskBox/Services/AppUpdateService.cs"] = 3,
             ["src/DeskBox/Services/CitySearchService.cs"] = 1,
             ["src/DeskBox/Services/DeskBoxAttachmentHealthService.cs"] = 1,
@@ -99,8 +100,8 @@ public sealed class JsonSerializationBaselineContractTests : IDisposable
             Assert.Equal(expectedCount, actual[path]);
         }
 
-        Assert.Equal(44, actual.Count);
-        Assert.Equal(111, actual.Values.Sum());
+        Assert.Equal(45, actual.Count);
+        Assert.Equal(113, actual.Values.Sum());
 
         string[] expectedContextOwners =
         [
@@ -116,6 +117,7 @@ public sealed class JsonSerializationBaselineContractTests : IDisposable
             "src/DeskBox/App.AotTodoNotificationForwardingSmoke.cs",
             "src/DeskBox/App.AotTodoNotificationLifecycleSmoke.cs",
             "src/DeskBox/App.AotTodoRecurrenceReminderSmoke.cs",
+            "src/DeskBox/Controls/WidgetContents/CountdownPanel.cs",
             "src/DeskBox/Services/AppUpdateService.cs",
             "src/DeskBox/Services/DeskBoxDataBackupService.cs",
             "src/DeskBox/Services/DeskBoxDiagnosticsBundleService.cs",
@@ -151,7 +153,7 @@ public sealed class JsonSerializationBaselineContractTests : IDisposable
             .Order()
             .ToArray();
 
-        Assert.Equal(38, actualContextOwners.Length);
+        Assert.Equal(39, actualContextOwners.Length);
         Assert.Equal(expectedContextOwners, actualContextOwners);
     }
 

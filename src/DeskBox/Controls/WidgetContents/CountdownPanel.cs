@@ -71,8 +71,7 @@ public sealed class CountdownPanel : StackPanel
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
             var json = JsonSerializer.Serialize(_data, CountdownJsonContext.Default.CountdownPreferences);
-            await File.WriteAllTextAsync(_path + ".tmp", json);
-            File.Move(_path + ".tmp", _path, overwrite: true);
+            await ResilientJsonStore.SaveAsync(_path, json);
             _status.Text = "";
         }
         catch (Exception ex) { _status.Text = "儲存失敗，請重試：" + ex.Message; }

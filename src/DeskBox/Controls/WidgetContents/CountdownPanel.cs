@@ -22,7 +22,7 @@ public sealed class CountdownPreferences
 internal sealed partial class CountdownJsonContext : JsonSerializerContext { }
 
 /// <summary>Local, per-widget countdowns, independent of photo/calendar preferences.</summary>
-public sealed class CountdownPanel : StackPanel
+public sealed partial class CountdownPanel : StackPanel
 {
     private readonly string _path;
     private readonly StackPanel _list = new() { Spacing = 12 };

@@ -12,9 +12,9 @@ namespace DeskBox.Services;
 
 public sealed partial class AppUpdateService : IAppUpdateService
 {
-    public const string DefaultManifestUrl = "https://deskbox.fun/update/stable.json";
-    public const string DefaultGitHubLatestReleaseApiUrl = "https://api.github.com/repos/Tianyu199509/DeskBox/releases/latest";
-    public const string DefaultManualDownloadUrl = "https://deskbox.fun/download";
+    public const string DefaultManifestUrl = "https://github.com/panda-island/DeskBox/releases/latest/download/stable.json";
+    public const string DefaultGitHubLatestReleaseApiUrl = "https://api.github.com/repos/panda-island/DeskBox/releases/latest";
+    public const string DefaultManualDownloadUrl = "https://github.com/panda-island/DeskBox/releases/latest";
 
     private readonly HttpClient _httpClient;
     private readonly string _manifestUrl;

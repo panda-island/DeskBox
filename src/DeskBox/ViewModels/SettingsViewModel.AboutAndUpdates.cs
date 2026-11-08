@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using DeskBox.Models;
 using DeskBox.Services;
 using Microsoft.UI.Xaml;
@@ -21,14 +21,14 @@ public partial class SettingsViewModel
     public string OfficialWebsiteLink => OfficialWebsiteUrl;
     public string MicrosoftStoreLink => MicrosoftStoreUrl;
     public string MicrosoftStoreAppLink => MicrosoftStoreAppUrl;
-    public Visibility StoreSupportCardVisibility => IsDirectInstallerUpdateDelivery ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility StoreSupportCardVisibility => Visibility.Collapsed;
 
     /// <summary>
     /// Donation QR assets ship only in Direct builds; Store policy forbids
     /// payment QR codes in the package, so every surface that shows one must
     /// collapse under the Store channel.
     /// </summary>
-    public Visibility DonationQrCodeVisibility => IsDirectInstallerUpdateDelivery ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility DonationQrCodeVisibility => Visibility.Collapsed;
     public string OpenSourceRepositoryDisplayText =>
         _localizationService.Format(
             "Settings.About.Developer",

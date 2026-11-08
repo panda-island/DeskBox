@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Window
     x:Class="DeskBox.Views.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -3483,7 +3483,7 @@ Text="DeskBox" />
                                 <FontIcon Glyph="&#xE719;" />
                             </toolkit:SettingsCard.HeaderIcon>
                             <Button
-                                x:Name="StoreSupportButton"
+                                x:Name="StoreSupportButton" Visibility="Collapsed"
                                 Click="ShowStoreSupportDialogButton_Click"
                                 HorizontalAlignment="Right"
                                 Style="{StaticResource ActionButtonStyle}"
@@ -3741,7 +3741,7 @@ Text="DeskBox" />
                 VerticalScrollBarVisibility="Auto"
                 VerticalScrollMode="Auto">
                 <StackPanel
-                    x:Name="SupportDialogContent"
+                    x:Name="SupportDialogContent" Visibility="Collapsed"
                     Width="480"
                     MaxWidth="480"
                     Spacing="14">

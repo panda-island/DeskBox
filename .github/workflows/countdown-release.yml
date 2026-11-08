@@ -1,0 +1,64 @@
+name: Countdown release
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'installer/**'
+      - '.github/workflows/countdown-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: countdown-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: windows-2025
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.402
+      - name: Restore and test x64
+        shell: pwsh
+        run: |
+          dotnet restore DeskBox.sln --locked-mode -p:Platform=x64 -p:RuntimeIdentifier=win-x64
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          dotnet test tests/DeskBox.Tests/DeskBox.Tests.csproj -c Release --no-restore -p:Platform=x64 -p:RuntimeIdentifier=win-x64 -p:WindowsAppSdkBootstrapInitialize=false --logger trx -v:minimal
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Publish offline Native AOT application
+        shell: pwsh
+        run: ./scripts/publish-aot-retail.ps1 -Platform x64
+      - name: Package and prepare verified update manifest
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $version = ([xml](Get-Content src/DeskBox/DeskBox.csproj -Raw)).Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+          $out = Join-Path $PWD '.artifacts/release'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          $iscc = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6/ISCC.exe'
+          if (!(Test-Path $iscc)) { throw 'Inno Setup 6 is required' }
+          & $iscc /DDeskBoxNativeAot=1 /DDeskBoxBundledRuntime=1 "/DMyAppReleaseDir=$PWD/.artifacts/aot-retail/win-x64/publish" "/O$out" installer/DeskBox.iss
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $exe = Get-Item "$out/DeskBox_Setup_${version}_x64.exe"
+          $hash = (Get-FileHash $exe.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $($exe.Name)" | Set-Content "$($exe.FullName).sha256"
+          $url = "https://github.com/${{ github.repository }}/releases/download/v$version"
+          @{ schemaVersion=1; channel='stable'; version=$version; releaseDate=(Get-Date -Format yyyy-MM-dd); minimumSupportedVersion='1.0.0'; downloadUrl="$url/$($exe.Name)"; manualDownloadUrl="https://github.com/${{ github.repository }}/releases/latest"; sha256=$hash; size=$exe.Length; summary=@{ 'zh-TW'='新增成年、統測與自訂倒數；移除捐獻入口。'; 'en-US'='Desktop countdowns and fork update channel.' } } | ConvertTo-Json -Depth 6 | Set-Content "$out/stable.json" -Encoding utf8NoBOM
+          "RELEASE_VERSION=$version" >> $env:GITHUB_ENV
+      - name: Save build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: countdown-installer
+          path: .artifacts/release/*
+      - name: Publish release for in-app updates
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "v$env:RELEASE_VERSION" --repo '${{ github.repository }}' 2>$null
+          if ($LASTEXITCODE -eq 0) { throw 'Version already published; bump the version before releasing again.' }
+          gh release create "v$env:RELEASE_VERSION" .artifacts/release/* --repo '${{ github.repository }}' --target '${{ github.sha }}' --title "DeskBox $env:RELEASE_VERSION 倒數版" --notes '在時光格子右上角按「倒數」，新增成年、統測或自訂日期。此分支後續可由 App 內更新。官方版第一次切換需安裝此版本。'
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }

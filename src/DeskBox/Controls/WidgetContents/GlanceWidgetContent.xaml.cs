@@ -66,6 +66,13 @@ public sealed partial class GlanceWidgetContent : UserControl
         _calendarImageGradientBrush.GradientStops.Add(_calendarImageGradientStart);
         _calendarImageGradientBrush.GradientStops.Add(_calendarImageGradientEnd);
         DataContext = viewModel;
+        var countdown = new CountdownPanel(viewModel.Config.Id);
+        var scroller = new ScrollViewer { Content = countdown, Visibility = Visibility.Collapsed, Background = (Brush)Application.Current.Resources["SolidBackgroundFillColorBaseBrush"] };
+        RootGrid.Children.Add(scroller);
+        var toggle = new Microsoft.UI.Xaml.Controls.Primitives.ToggleButton { Content = "倒數", HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(8), IsChecked = countdown.IsCountdownVisible };
+        scroller.Visibility = countdown.IsCountdownVisible ? Visibility.Visible : Visibility.Collapsed;
+        toggle.Click += async (_, _) => { scroller.Visibility = toggle.IsChecked == true ? Visibility.Visible : Visibility.Collapsed; await countdown.SetVisibleAsync(toggle.IsChecked == true); };
+        RootGrid.Children.Add(toggle);
         _loadingDelayTimer.Tick += LoadingDelayTimer_Tick;
         _imageResizeDelayTimer.Tick += ImageResizeDelayTimer_Tick;
         _layoutResizeTimer.Tick += LayoutResizeTimer_Tick;
